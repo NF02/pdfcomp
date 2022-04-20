@@ -1,7 +1,14 @@
 #!/bin/sh
+#- Function -#
 command_exists() {
   command -v "$@" >/dev/null 2>&1
 }
+
+pdfcomprimer(){
+	gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=$comp -dNOPAUSE \
+		-dQUIET -dBATCH -sOutputFile=$pdfOut $pdfIn
+}
+
 
 if ! command_exists gs; then
 	echo "ghostscript is not installed"
@@ -9,9 +16,9 @@ if ! command_exists gs; then
 fi
 
 #-  -#
-comp=default
-pdfIn=$3
-pdfOut=$4
+comp="/default"
+pdfIn=$1
+pdfOut=$2
 
 if [[ $1 == "-fl" ]] || [[ $1 == "--format-list" ]];then
 	cat << 'EOF'
@@ -50,23 +57,18 @@ EOF
 	exit 0
 fi
 
+if [[ $1 == "-f" ]] || [[ $1 == "--format" ]];then
+	pdfIn=$3
+	pdfOut=$4
+	if [[ $2 == "screen" ]] || [[ $2 == "ebook" ]] || [[ $2 == "preprint" ]] ||
+		[[ $2 == "print" ]]; then
+		comp="/$2"
+	fi
+fi
 
 if [[ $pdfIn == "" ]] || [[ $pdfOut == "" ]];then
 	echo "Missing input/output files, try again!"
+	else pdfcomprimer
 fi
-
-
-
-if [[ $1 == "-f" ]] || [[ $1 == "--format" ]];then
-	if [[ $2 == "screen" ]] || [[ $2 == "ebook" ]] || [[ $2 == "preprint" ]] ||
-		[[ $2 == "print" ]]; then
-		comp=$2
-	fi
-	
-fi
-pdfcomprimer(){
-	gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/$comp -dNOPAUSE \
-		-dQUIET -dBATCH -sOutputFile=$pdfOut $pdfIn
-}
 
 
