@@ -1,0 +1,26 @@
+#!/bin/env sh
+command_exists() {
+  command -v "$@" >/dev/null 2>&1
+}
+
+if ! command_exists ghostscript; then
+	echo "ghostscript is not installed"
+	exit -1
+fi
+
+
+if [[ $1 == "-f" ]] || [[ $1 == "--format" ]];then
+	echo "test"
+	
+fi
+
+if [[ $1 == "-fl" ]] || [[ $1 == "--format-list" ]];then
+	
+fi
+
+pdfcomprimer(){
+	gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=$comp -dNOPAUSE \
+	-dQUIET -dBATCH -sOutputFile=$pdfOut $pdfIn
+}
+
+
