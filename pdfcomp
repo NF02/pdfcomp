@@ -1,26 +1,72 @@
-#!/bin/env sh
+#!/bin/sh
 command_exists() {
   command -v "$@" >/dev/null 2>&1
 }
 
-if ! command_exists ghostscript; then
+if ! command_exists gs; then
 	echo "ghostscript is not installed"
 	exit -1
 fi
 
-
-if [[ $1 == "-f" ]] || [[ $1 == "--format" ]];then
-	echo "test"
-	
-fi
+#-  -#
+comp=default
+pdfIn=$3
+pdfOut=$4
 
 if [[ $1 == "-fl" ]] || [[ $1 == "--format-list" ]];then
-	
+	cat << 'EOF'
+ ___________ _____________________________________________________________
+|  Quality  | Description                                                 |
+|-----------|-------------------------------------------------------------|
+| screen    | The output file will have up to 72 DPI.                     |
+| ebook     | The output file will have up to 150 DPI.                    |
+| preprint  | The output file will have up to 300 DPI.                    |
+| printer   | The output files will have up to 300 DPI and will be ready  |
+|           | for printing                                                |
+| default   | It depends on which of the above options is assigned as the |
+|           | “default”.                                                  |
+|           |                                                             |
+ -------------------------------------------------------------------------
+EOF
+	exit 0
 fi
 
+if [[ $1 == --help ]] || [[ $1 == -h ]] || [[ $1 == -HELP ]] || [[ $1 == "" ]]; then
+	cat << 'EOF'
+┏━┓╺┳┓┏━╸┏━╸┏━┓┏┳┓┏━┓   ┏━┓ ╺┓
+┣━┛ ┃┃┣╸ ┃  ┃ ┃┃┃┃┣━┛   ┃┃┃  ┃
+╹  ╺┻┛╹  ┗━╸┗━┛╹ ╹╹     ┗━┛╹╺┻╸
+This application allows you to compress PDFs, using ghostscript, this script
+is designed to simplify and speed up the use of the tool, making it more 
+user-friendly and practical.
+----------------------------------------------------------------------------
+-                               commands                                   -
+----------------------------------------------------------------------------
+-h  (--help): shows help on screen, with all passable parameters.
+-f  (--format): allows you to select the compression level
+-fl (--format-list): shows the list of possible compression levels.
+
+EOF
+	exit 0
+fi
+
+
+if [[ $pdfIn == "" ]] || [[ $pdfOut == "" ]];then
+	echo "Missing input/output files, try again!"
+fi
+
+
+
+if [[ $1 == "-f" ]] || [[ $1 == "--format" ]];then
+	if [[ $2 == "screen" ]] || [[ $2 == "ebook" ]] || [[ $2 == "preprint" ]] ||
+		[[ $2 == "print" ]]; then
+		comp=$2
+	fi
+	
+fi
 pdfcomprimer(){
-	gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=$comp -dNOPAUSE \
-	-dQUIET -dBATCH -sOutputFile=$pdfOut $pdfIn
+	gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/$comp -dNOPAUSE \
+		-dQUIET -dBATCH -sOutputFile=$pdfOut $pdfIn
 }
 
 
