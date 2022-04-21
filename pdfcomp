@@ -68,7 +68,8 @@ fi
 
 if [[ $pdfIn == "" ]] || [[ $pdfOut == "" ]];then
 	echo "Missing input/output files, try again!"
-	else pdfcomprimer
+	else if test -f "$pdfIn"; then 
+			pdfcomprimer
+		else echo "Input file not exists"
+	fi
 fi
-
-
