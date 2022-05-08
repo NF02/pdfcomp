@@ -66,10 +66,13 @@ if [[ $1 == "-f" ]] || [[ $1 == "--format" ]];then
 	fi
 fi
 
-if [[ $pdfIn == "" ]] || [[ $pdfOut == "" ]];then
+if [[ $pdfIn == "" ]] || [[ $pdfOut == "" ]]; then
 	echo "Missing input/output files, try again!"
-	else if test -f "$pdfIn"; then 
-			pdfcomprimer
-		else echo "Input file not exists"
+	else if  [[ $pdfIn == $pdfOut ]];then
+		echo "You can't overwrite this file"
+		else if test -f "$pdfIn"; then
+				pdfcomprimer
+			else echo "Input file not exists"
+		fi
 	fi
 fi
