@@ -8,7 +8,56 @@ pdfcomprimer(){
 	gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=$comp -dNOPAUSE \
 		-dQUIET -dBATCH -sOutputFile=$pdfOut $pdfIn
 }
+pdfcomprimerPrev() {
+    echo $pdfIn
+    if [[ $pdfIn == "" ]]; then
+	echo "Missing input files, try again!"
+   	exit -1
+    fi
+    while [ "$con" != "quit" ]
+	  do
+ 		cat << 'EOF'
+ ___________ _____________________________________________________________
+|  Quality  | Description                                                 |
+|-----------|-------------------------------------------------------------|
+| screen    | The output file will have up to 72 DPI.                     |
+| ebook     | The output file will have up to 150 DPI.                    |
+| preprint  | The output file will have up to 300 DPI.                    |
+| printer   | The output files will have up to 300 DPI and will be ready  |
+|           | for printing                                                |
+| default   | It depends on which of the above options is assigned as the |
+|           | “default”.                                                  |
+| quit      | Clese the program                                           |
+|           |                                                             |
+ -------------------------------------------------------------------------
+EOF
+		echo "Select the degree of compression: "
+		read con
+		if [[ $con == "quit" ]]; then
+			exit 0
+		fi
+	
+		if [[ $con == "" ]];then
+		   con="default"
+		fi
+		   
+    		gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=$comp -dNOPAUSE \
+	   	   -dQUIET -dBATCH -sOutputFile=/tmp/prev.pdf $pdfIn
+	if [[ $con == "screen" ]] || [[ $con == "ebook" ]] || [[ $con == "preprint" ]] || [[ $con == "print" ]] || [[ $con == "default" ]]; then
+		echo "
+ ____________________ _____________________________________ ___________________
+|  Source file       |          output file                | Compression level |
+ ------------------------------------------------------------------------------
+  $(du -sh $pdfIn)        $(du -sh /tmp/prev.pdf)                 $con           
+ ==============================================================================
+	"	
+		else echo "format not found"
+	fi
 
+	
+    done
+	exit 0
+}
 
 if ! command_exists gs; then
 	echo "ghostscript is not installed"
@@ -61,11 +110,16 @@ if [[ $1 == "-f" ]] || [[ $1 == "--format" ]];then
 	pdfIn=$3
 	pdfOut=$4
 	if [[ $2 == "screen" ]] || [[ $2 == "ebook" ]] || [[ $2 == "preprint" ]] ||
-		[[ $2 == "print" ]]; then
-		comp="/$2"
+		[[ $2 == "print" ]] || [[ $con == "default" ]]; then
+	    comp="/$2"
+	    else echo "format not exists" && exit -4
 	fi
 fi
-
+if [[ $1 == "-p" ]] || [[ $1 == "--prev" ]]; then
+	pdfIn=$2
+	pdfcomprimerPrev
+fi
+   
 if [[ $pdfIn == "" ]] || [[ $pdfOut == "" ]]; then
 	echo "Missing input/output files, try again!"
 	else if  [[ $pdfIn == $pdfOut ]];then
