@@ -109,24 +109,24 @@ fi
 if [[ $1 == "-f" ]] || [[ $1 == "--format" ]];then
 	pdfIn=$3
 	pdfOut=$4
-	if [[ $2 == "screen" ]] || [[ $2 == "ebook" ]] || [[ $2 == "preprint" ]] ||
-		[[ $2 == "print" ]] || [[ $con == "default" ]]; then
+	if [[ $2 == "screen" ]] || [[ $2 == "ebook" ]] || [[ $2 == "preprint" ]] || [[ $2 == "print" ]] || [[ $con == "default" ]]; then
 	    comp="/$2"
-	    else echo "format not exists" && exit -4
+	    else echo "format not exists"; exit -4
 	fi
 fi
+
 if [[ $1 == "-p" ]] || [[ $1 == "--prev" ]]; then
 	pdfIn=$2
 	pdfcomprimerPrev
 fi
    
 if [[ $pdfIn == "" ]] || [[ $pdfOut == "" ]]; then
-	echo "Missing input/output files, try again!"
-	else if  [[ $pdfIn == $pdfOut ]];then
-		echo "You can't overwrite this file"
-		else if test -f "$pdfIn"; then
-				pdfcomprimer
-			else echo "Input file not exists"
-		fi
-	fi
+    echo "Missing input/output files, try again!"
+elif  [[ $pdfIn == $pdfOut ]];then
+    echo "You can't overwrite this file"
+elif test -f "$pdfIn"; then
+    pdfcomprimer
+else
+    echo "Input file not exists"; exit -6
 fi
+
