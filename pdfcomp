@@ -8,6 +8,12 @@ pdfcomprimer(){
 	gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=$comp -dNOPAUSE \
 		-dQUIET -dBATCH -sOutputFile=$pdfOut $pdfIn
 }
+pdfcomprimerNo(){
+    pdfOutAuto=$(echo $pdfIn | sed  "s/.pdf/_comp.pdf/")
+    echo $pdfOutAuto
+    gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=$comp -dNOPAUSE \
+		-dQUIET -dBATCH -sOutputFile=$pdfOutAuto $pdfIn
+}
 pdfcomprimerPrev() {
     echo $pdfIn
     if [[ $pdfIn == "" ]]; then
@@ -120,13 +126,14 @@ if [[ $1 == "-p" ]] || [[ $1 == "--prev" ]]; then
 	pdfcomprimerPrev
 fi
    
-if [[ $pdfIn == "" ]] || [[ $pdfOut == "" ]]; then
+if [[ $pdfIn == "" ]]; then
     echo "Missing input/output files, try again!"
 elif  [[ $pdfIn == $pdfOut ]];then
     echo "You can't overwrite this file"
-elif test -f "$pdfIn"; then
+elif test -f "$pdfIn" && [[ $pdfOut != "" ]]; then
     pdfcomprimer
-else
-    echo "Input file not exists"; exit -6
+elif test -f "$pdfIn" && [[ $pdfOut == "" ]]; then
+    pdfcomprimerNo
+    else echo "Input file not exists"; exit -6
 fi
 
