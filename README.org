@@ -1,0 +1,74 @@
+#+author: Nicola Ferru
+#+email: ask.nfvblog@outlook.it
+#+title: PDF COMPressor
+#+description: A simple bash script to compress PDF files using Ghostscript with interactive preview and multiple DPI presets.
+
+This script is meant to simplify ghostscript syntax and also to have a convenient and practical solution for *PDF compression*.
+
+* Dependence                                         :dependence:ghostscript:
+The only dependencies you need to install =ghostscript=. To do this, just go to the repo of your Linux distro or to brew if it is mac os x and install the package of the same name. For the rest the script can be put in a path to be more convenient.
+** Arch Linux                                                         :Arch:
+#+begin_src shell
+  sudo pacman -S ghostscript
+#+end_src
+** Debian Linux and derived                                  :debian:ubuntu:
+#+begin_src shell
+  sudo apt install ghostscript
+#+end_src
+** Fedora Linux and derived                                  :centos:fedora:RedHat:
+#+begin_src shell
+  sudo dnf install ghostscript
+#+end_src
+** Mac Os X                                                         :macosx:
+#+begin_src shell
+  brew install ghostscript
+#+end_src
+Of course it is also possible to install it manually.
+
+* Installation                                                      :install:
+To make the script globally accessible, you can move it to your local bin directory:
+#+begin_src shell
+  chmod +x pdfcompressor.sh
+  sudo mv pdfcompressor.sh /usr/local/bin/pdfcompressor
+#+end_src
+
+* Usage :usage:examples:
+Once installed, you can use the script with the following syntax:
+#+begin_src shell
+  pdfcompressor [option] input.pdf [output.pdf]
+#+end_src
+
+** Options
+| Flag | Long Name     | Description                                           |
+|------+---------------+-------------------------------------------------------|
+| -h   | --help        | Show the help message and exit.                       |
+| -f   | --format      | Select a specific compression level.                  |
+| -fl  | --format-list | Display all available compression DPI levels.         |
+| -p   | --prev        | Interactive mode with live size comparison (Preview). |
+
+** Practical Examples
+
+*** Basic Compression
+If you don't specify an output name, the script creates =filename_comp.pdf= with default settings:
+#+begin_src shell
+  pdfcompressor document.pdf
+#+end_src
+
+*** Specific Quality Level
+Compress a file specifically for screen viewing (low res, small size):
+#+begin_src shell
+  pdfcompressor -f screen input.pdf output_small.pdf
+#+end_src
+
+*** Interactive Preview (Recommended)
+This is the most useful feature. It allows you to test different levels and see the final file size before saving:
+#+begin_src shell
+  pdfcompressor -p my_heavy_file.pdf
+#+end_src
+
+** Compression Levels (Ghostscript standard)
+- *screen*: 72 dpi (smallest size, lowest quality).
+- *ebook*: 150 dpi (perfect for digital reading).
+- *preprint*: 300 dpi (high quality, color preserving).
+- *printer*: 300 dpi (optimized for physical printing).
+- *default*: GS standard balance.
